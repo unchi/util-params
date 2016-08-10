@@ -51,6 +51,38 @@ module Util
       vals
     end
 
+    # パラメーター取得
+    def get_param_int name, default = nil, is_require = false, params = {}
+  
+      val = get_param_val name, default, is_require
+  
+      return nil if val.nil?
+      return val if val.kind_of? Integer
+  
+      if /[^\d]/ =~ val
+        push_error "#{name.to_s} type [#{val.to_s}] != integer"
+      end
+  
+      v = val.to_i
+  
+      if params.key? :enum
+        for e in params[:enum]
+          logger.debug e
+          return v if e === v
+        end
+        push_error "#{name.to_s} == unknone val [#{v.to_s}]"
+      end
+  
+      if params.key?(:min) && (v.length < params[:min])
+        push_error "#{name.to_s} val [#{v.to_s}] < #{params[:min].to_s}"
+      end
+  
+      if params.key?(:max) && (v.length > params[:max])
+        push_error "#{name.to_s} val [#{v.to_s}] > #{params[:max].to_s}"
+      end
+      v
+    end
+
     def get_param_ints name, default = [], is_require = false
       vals = get_param_val name, default, is_require
       return nil if vals.nil?
