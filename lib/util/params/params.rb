@@ -121,7 +121,7 @@ module Util
   
     def get_param_object name, default = {}, is_require = false
       val = get_param_val name, default, is_require
-      val.permit!.to_h
+      val.permit!.to_h.deep_symbolize_keys
     end
   
     #
