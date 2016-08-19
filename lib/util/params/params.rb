@@ -115,7 +115,7 @@ module Util
     def get_param_objects name, default = [], is_require = false
       vals = get_param_val name, default, is_require
       vals.map do |v|
-        v.permit!.to_h
+        v.permit!.to_h.deep_symbolize_keys
       end
     end
   
