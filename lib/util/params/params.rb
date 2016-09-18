@@ -10,17 +10,17 @@ module Util
     end
 
     module Type
-      INTEGER = 1
-      STRING  = 2
-      FLOAT   = 3
-      FILE    = 4
-      BOOLEAN = 5
-      OBJECT  = 6
-      ARRAY   = 7
+      INTEGER = :integer
+      STRING  = :string
+      FLOAT   = :float
+      FILE    = :file
+      BOOLEAN = :boolean
+      OBJECT  = :object
+      ARRAY   = :array
     end
 
     def get_params options
-      options = _symbolize_keys options
+      options = options.deep_symbolize_keys
 
       key = options[:key]
       val = _load_val params, key, options[:default], options[:require]
@@ -73,7 +73,7 @@ module Util
     def _load_val vals, key, default, is_require
 
       unless vals.has_key? key
-        push_error "#{key.to_s} == nil" if is_require
+        _push_error "#{key.to_s} == nil" if is_require
         return default
       end
 
@@ -116,7 +116,7 @@ module Util
       return nil if val.blank?
 
       if /[^\d]/ =~ val.to_s
-        push_error "#{key.to_s} type [#{val.to_s}] != integer"
+        _push_error "#{key.to_s} type [#{val.to_s}] != integer"
       end
 
       v = val.to_i
@@ -125,15 +125,15 @@ module Util
         for e in enum
           return v if e === v
         end
-        push_error "#{key.to_s} == unknone val [#{v.to_s}]"
+        _push_error "#{key.to_s} == unknone val [#{v.to_s}]"
       end
 
       if min && (v < min)
-        push_error "#{key.to_s} val [#{v.to_s}] < #{min.to_s}"
+        _push_error "#{key.to_s} val [#{v.to_s}] < #{min.to_s}"
       end
 
       if max && (v > max)
-        push_error "#{key.to_s} val [#{v.to_s}] > #{max.to_s}"
+        _push_error "#{key.to_s} val [#{v.to_s}] > #{max.to_s}"
       end
 
       v
@@ -148,19 +148,19 @@ module Util
         enum.each do |e|
           return v if e === v
         end
-        push_error "#{key.to_s} == unknone val [#{v.to_s}]"
+        _push_error "#{key.to_s} == unknone val [#{v.to_s}]"
       end
 
       if min && (v.length < min)
-        push_error "#{key.to_s}.length < #{min.to_s} ('#{v.to_s}')"
+        _push_error "#{key.to_s}.length < #{min.to_s} ('#{v.to_s}')"
       end
 
       if max && (v.length > max)
-        push_error "#{key.to_s}.length > #{max.to_s} ('#{v.to_s}')"
+        _push_error "#{key.to_s}.length > #{max.to_s} ('#{v.to_s}')"
       end
 
       if reg && !(/#{reg}/ =~ val)
-        push_error "#{key.to_s} unmatch /#{reg.to_s}/ =~ [#{v.to_s}]"
+        _push_error "#{key.to_s} unmatch /#{reg.to_s}/ =~ [#{v.to_s}]"
       end
 
       v
@@ -170,17 +170,17 @@ module Util
       return nil if val.blank?
 
       if /[^\d.]/ =~ val
-        push_error "#{key.to_s} type [#{val.to_s}] != float"
+        _push_error "#{key.to_s} type [#{val.to_s}] != float"
       end
 
       v = val.to_f
 
       if min && (v < min)
-        push_error "#{key.to_s} val [#{v.to_s}] < #{min.to_s}"
+        _push_error "#{key.to_s} val [#{v.to_s}] < #{min.to_s}"
       end
 
       if max && (v > max)
-        push_error "#{key.to_s} val [#{v.to_s}] > #{max.to_s}"
+        _push_error "#{key.to_s} val [#{v.to_s}] > #{max.to_s}"
       end
 
       v     
@@ -199,7 +199,7 @@ module Util
       return nil if val.nil?
 
       if f.size.blank?
-        push_error "#{key.to_s} == nil"
+        _push_error "#{key.to_s} == nil"
         return nil
       end
 
@@ -213,18 +213,18 @@ module Util
       return nil if val.nil?
 
       unless val.kind_of? Array
-        push_error "#{key.to_s}.type != Array"
+        _push_error "#{key.to_s}.type != Array"
         return nil
       end
 
       v = val
 
       if min && (v.length < min)
-        push_error "#{key.to_s} val [#{v.to_s}.length] < #{min.to_s}"
+        _push_error "#{key.to_s} val [#{v.to_s}.length] < #{min.to_s}"
       end
 
       if max && (v.length > max)
-        push_error "#{key.to_s} val [#{v.to_s}.length] > #{max.to_s}"
+        _push_error "#{key.to_s} val [#{v.to_s}.length] > #{max.to_s}"
       end
 
       v
@@ -245,12 +245,8 @@ module Util
       end
     end
 
-    def _symbolize_keys hash
-      hash.map{|k,v| [k.to_sym, v] }.to_h
-    end
-
     # エラー追加
-    def push_error message
+    def _push_error message
       @is_error |= true
       @errors.push message
     end
