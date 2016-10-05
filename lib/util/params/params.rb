@@ -30,31 +30,31 @@ module Util
       _validate key, options[:type], val, options
     end
 
-    def get_int_params key, options
+    def get_int_params key, options={}
       get_params options.merge(key: key, type: Type::INTEGER)
     end
 
-    def get_str_params key, options
+    def get_str_params key, options={}
       get_params options.merge(key: key, type: Type::STRING)
     end
 
-    def get_float_params key, options
+    def get_float_params key, options={}
       get_params options.merge(key: key, type: Type::FLOAT)
     end
 
-    def get_file_params key, options
+    def get_file_params key, options={}
       get_params options.merge(key: key, type: Type::FILE)
     end
 
-    def get_bool_params key, options
+    def get_bool_params key, options={}
       get_params options.merge(key: key, type: Type::BOOLEAN)
     end
 
-    def get_array_params key, options
+    def get_array_params key, options={}
       get_params options.merge(key: key, type: Type::ARRAY)
     end
 
-    def get_object_params key, options
+    def get_object_params key, options={}
       get_params options.merge(key: key, type: Type::OBJECT)
     end
 
