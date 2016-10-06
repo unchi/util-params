@@ -198,7 +198,7 @@ module Util
     def _validate_file key, val
       return nil if val.nil?
 
-      if f.size.blank?
+      if val.size.blank?
         _push_error "#{key.to_s} == nil"
         return nil
       end
