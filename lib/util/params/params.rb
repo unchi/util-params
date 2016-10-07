@@ -233,6 +233,8 @@ module Util
     def _validate_object key, val, elements
       return nil if val.nil?
 
+      r = {}
+
       elements.map do |options|
         options ||= {}
         elem_key = options[:key]
@@ -241,8 +243,9 @@ module Util
         elem_require = options[:require]
         elem_val = _load_val val, elem_key, elem_default, elem_require
 
-        _validate "#{key}[#{elem_key}]", elem_type, elem_val, options
+        r[elem_key] = _validate("#{key}[#{elem_key}]", elem_type, elem_val, options)
       end
+      r
     end
 
     # エラー追加
