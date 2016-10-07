@@ -72,7 +72,7 @@ module Util
 
     def _load_val vals, key, default, is_require
 
-      unless vals.has_key? key
+      unless vals.try(:has_key?, key)
         _push_error "#{key.to_s} == nil" if is_require
         return default
       end
