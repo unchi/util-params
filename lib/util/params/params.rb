@@ -192,7 +192,8 @@ module Util
       return nil if val.blank?
       return false if val == 'false'
       return true if val == 'true'
-      val.to_i > 0
+      return false if val == '0'
+      true
     end
 
     def _validate_file key, val
