@@ -169,7 +169,7 @@ module Util
     def _validate_float key, val, min, max
       return nil if val.blank?
 
-      if /[^\d.]/ =~ val
+      if /[^\d.]/ =~ val.to_s
         _push_error "#{key.to_s} type [#{val.to_s}] != float"
       end
 
