@@ -237,7 +237,7 @@ module Util
       r = {}
 
       if elements.nil?
-        return val.permit!
+        return val.permit!.to_h
       end
 
       elements.map do |options|
