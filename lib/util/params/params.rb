@@ -236,6 +236,10 @@ module Util
 
       r = {}
 
+      if elements.nil?
+        return val.permit!
+      end
+
       elements.map do |options|
         options ||= {}
         elem_key = options[:key]
