@@ -3,6 +3,7 @@ module Util
 
     # コンストラクタ
     def initialize
+      super
       # エラーフラグ
       @is_error = false
       # エラーリスト
