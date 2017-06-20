@@ -126,7 +126,7 @@ module Util
         for e in enum
           return v if e === v
         end
-        _push_error "#{key.to_s} == unknone val [#{v.to_s}]"
+        _push_error "#{key.to_s} == unknown val [#{v.to_s}]"
       end
 
       if min && (v < min)
@@ -149,7 +149,7 @@ module Util
         enum.each do |e|
           return v if e === v
         end
-        _push_error "#{key.to_s} == unknone val [#{v.to_s}]"
+        _push_error "#{key.to_s} == unknown val [#{v.to_s}]"
       end
 
       if min && (v.length < min)
