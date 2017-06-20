@@ -24,7 +24,7 @@ module Util
       options = options.deep_symbolize_keys
 
       key = options[:key]
-      val = _load_val params, key, options[:default], options[:require]
+      val = _load_val params.permit!.to_h, key, options[:default], options[:require]
 
       return nil if val.nil?
 
@@ -235,10 +235,15 @@ module Util
     def _validate_object key, val, elements
       return nil if val.nil?
 
+      unless val.kind_of? Hash
+        _push_error "#{key.to_s}.type != Hash"
+        return nil
+      end
+
       r = {}
 
       if elements.nil?
-        return val.permit!.to_h
+        return val.to_h
       end
 
       elements.map do |options|
