@@ -26,8 +26,6 @@ module Util
       key = options[:key]
       val = _load_val params.permit!.to_h, key, options[:default], options[:require]
 
-      return nil if val.nil?
-
       _validate key, options[:type], val, options
     end
 
@@ -114,10 +112,10 @@ module Util
     end
 
     def _validate_int key, val, min, max, enum
-      return nil if val.blank?
 
-      if /[^\d]/ =~ val.to_s
-        _push_error "#{key.to_s} type [#{val.to_s}] != integer"
+      if val.blank? || /[^\d]/ =~ val.to_s
+        _push_error "#{key.try(:to_s)} type [#{val.try(:to_s)}] != integer"
+	return nil
       end
 
       v = val.to_i
@@ -141,7 +139,11 @@ module Util
     end
 
     def _validate_str key, val, min, max, enum, reg
-      return nil if val.nil?
+ 
+      if val.nil?
+        _push_error "#{key.try(:to_s)} type [#{val.try(:to_s)}] != string"
+	return nil
+      end
 
       v = val.to_s
 
@@ -168,10 +170,10 @@ module Util
     end
 
     def _validate_float key, val, min, max
-      return nil if val.blank?
 
-      if /[^\d.]/ =~ val.to_s
-        _push_error "#{key.to_s} type [#{val.to_s}] != float"
+      if val.blank? || /[^\d.]/ =~ val.to_s
+        _push_error "#{key.try(:to_s)} type [#{val.try(:to_s)}] != float"
+	return nil
       end
 
       v = val.to_f
@@ -184,7 +186,7 @@ module Util
         _push_error "#{key.to_s} val [#{v.to_s}] > #{max.to_s}"
       end
 
-      v     
+      v
     end
 
     def _validate_bool key, val
@@ -212,7 +214,6 @@ module Util
     end
 
     def _validate_array key, val, min, max
-      return nil if val.nil?
 
       unless val.kind_of? Array
         _push_error "#{key.to_s}.type != Array"
@@ -233,7 +234,6 @@ module Util
     end
 
     def _validate_object key, val, elements
-      return nil if val.nil?
 
       unless val.kind_of? Hash
         _push_error "#{key.to_s}.type != Hash"
