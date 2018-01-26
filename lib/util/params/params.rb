@@ -139,9 +139,9 @@ module Util
     end
 
     def _validate_str key, val, min, max, enum, reg
- 
+
       if val.nil?
-        _push_error "#{key.try(:to_s)} type [#{val.try(:to_s)}] != string"
+        _push_error "#{key.try(:to_s)} type [nil] != string"
 	return nil
       end
 
@@ -162,7 +162,7 @@ module Util
         _push_error "#{key.to_s}.length > #{max.to_s} ('#{v.to_s}')"
       end
 
-      if reg && !(/#{reg}/ =~ val)
+      if reg && !(/#{reg}/ =~ v)
         _push_error "#{key.to_s} unmatch /#{reg.to_s}/ =~ [#{v.to_s}]"
       end
 
