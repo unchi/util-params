@@ -26,7 +26,10 @@ module Util
       key = options[:key]
       val = _load_val params.permit!.to_h, key, options[:default], options[:require]
 
-      _push_error "*[#{key.to_s}] == nil" unless options[:null]
+      unless options[:null]
+        _push_error "*[#{key.to_s}] == nil" if val.nil?
+      end
+
       return nil if val.nil?
 
       _validate key, options[:type], val, options
