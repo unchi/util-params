@@ -26,35 +26,45 @@ module Util
       key = options[:key]
       val = _load_val params.permit!.to_h, key, options[:default], options[:require]
 
+      _push_error "*[#{key.to_s}] == nil" unless options[:null]
+      return nil if val.nil?
+
       _validate key, options[:type], val, options
     end
 
     def get_int_params key, options={}
-      get_params options.merge(key: key, type: Type::INTEGER)
+      base = {key: key, type: Type::INTEGER, null: true}
+      get_params base.merge(options)
     end
 
     def get_str_params key, options={}
-      get_params options.merge(key: key, type: Type::STRING)
+      base = {key: key, type: Type::STRING, null: true}
+      get_params base.merge(options)
     end
 
     def get_float_params key, options={}
-      get_params options.merge(key: key, type: Type::FLOAT)
+      base = {key: key, type: Type::FLOAT, null: true}
+      get_params base.merge(options)
     end
 
     def get_file_params key, options={}
-      get_params options.merge(key: key, type: Type::FILE)
+      base = {key: key, type: Type::FILE, null: true}
+      get_params base.merge(options)
     end
 
     def get_bool_params key, options={}
-      get_params options.merge(key: key, type: Type::BOOLEAN)
+      base = {key: key, type: Type::BOOLEAN, null: true}
+      get_params base.merge(options)
     end
 
     def get_array_params key, options={}
-      get_params options.merge(key: key, type: Type::ARRAY)
+      base = {key: key, type: Type::ARRAY, null: true}
+      get_params base.merge(options)
     end
 
     def get_object_params key, options={}
-      get_params options.merge(key: key, type: Type::OBJECT)
+      base = {key: key, type: Type::OBJECT, null: true}
+      get_params base.merge(options)
     end
 
 
@@ -112,10 +122,10 @@ module Util
     end
 
     def _validate_int key, val, min, max, enum
+      return nil if val.blank?
 
-      if val.blank? || /[^\d]/ =~ val.to_s
-        _push_error "#{key.try(:to_s)} type [#{val.try(:to_s)}] != integer"
-	return nil
+      if /[^\d]/ =~ val.to_s
+        _push_error "#{key.to_s} type [#{val.to_s}] != integer"
       end
 
       v = val.to_i
@@ -139,11 +149,7 @@ module Util
     end
 
     def _validate_str key, val, min, max, enum, reg
-
-      if val.nil?
-        _push_error "#{key.try(:to_s)} type [nil] != string"
-	return nil
-      end
+      return nil if val.nil?
 
       v = val.to_s
 
@@ -162,7 +168,7 @@ module Util
         _push_error "#{key.to_s}.length > #{max.to_s} ('#{v.to_s}')"
       end
 
-      if reg && !(/#{reg}/ =~ v)
+      if reg && !(/#{reg}/ =~ val)
         _push_error "#{key.to_s} unmatch /#{reg.to_s}/ =~ [#{v.to_s}]"
       end
 
@@ -170,10 +176,10 @@ module Util
     end
 
     def _validate_float key, val, min, max
+      return nil if val.blank?
 
-      if val.blank? || /[^\d.]/ =~ val.to_s
-        _push_error "#{key.try(:to_s)} type [#{val.try(:to_s)}] != float"
-	return nil
+      if /[^\d.]/ =~ val.to_s
+        _push_error "#{key.to_s} type [#{val.to_s}] != float"
       end
 
       v = val.to_f
@@ -186,7 +192,7 @@ module Util
         _push_error "#{key.to_s} val [#{v.to_s}] > #{max.to_s}"
       end
 
-      v
+      v     
     end
 
     def _validate_bool key, val
@@ -214,6 +220,7 @@ module Util
     end
 
     def _validate_array key, val, min, max
+      return nil if val.nil?
 
       unless val.kind_of? Array
         _push_error "#{key.to_s}.type != Array"
@@ -234,6 +241,7 @@ module Util
     end
 
     def _validate_object key, val, elements
+      return nil if val.nil?
 
       unless val.kind_of? Hash
         _push_error "#{key.to_s}.type != Hash"
