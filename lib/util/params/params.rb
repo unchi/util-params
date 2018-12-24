@@ -127,7 +127,7 @@ module Util
     def _validate_int key, val, min, max, enum
       return nil if val.blank?
 
-      if /[^\d]/ =~ val.to_s
+      if /[^\d-]/ =~ val.to_s
         _push_error "#{key.to_s} type [#{val.to_s}] != integer"
       end
 
